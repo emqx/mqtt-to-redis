@@ -1,0 +1,59 @@
+version: '3.8'
+services:
+  emqx-enterprise:
+    image: emqx/emqx-enterprise:5.0.3
+    container_name: emqx
+    healthcheck:
+      test: ["CMD", "emqx", "ping"]
+      interval: 10s
+      timeout: 10s
+      retries: 12
+    ports:
+      - 1883:1883
+      - 18083:18083
+    volumes:
+      - $PWD/emqx/cluster.hocon:/opt/emqx/data/configs/cluster.hocon
+      - $PWD/emqx/acl.conf:/opt/emqx/data/authz/acl.conf
+    depends_on:
+      redis: 
+        condition: service_started   
+
+  redis:
+    image: redis:7.0.12
+    container_name: redis
+    ports:
+      - 6379:6379
+    # TODO set password
+
+  simulate:
+    image: node:18.17-alpine
+    container_name: simulate
+    working_dir: /app
+    volumes:
+      - ./simulate:/app
+    command: sh -c "yarn && node index.js"
+    depends_on:
+      emqx-enterprise:
+        condition: service_healthy
+
+  grafana:
+    image: grafana/grafana:9.3.2
+    container_name: grafana
+    ports:
+      - 3000:3000
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=public
+      - GF_INSTALL_PLUGINS=redis-datasource
+    volumes:
+      - $PWD/grafana-dashboards:/grafana-dashboard-redis-analysis
+      - $PWD/grafana-provisioning/dashboard.yaml:/etc/grafana/provisioning/dashboards/dashboard.yaml
+      - $PWD/grafana-provisioning/datasource.yaml:/etc/grafana/provisioning/datasources/datasource.yaml
+    depends_on:
+      emqx-enterprise:
+        condition: service_healthy
+      redis:
+        condition: service_started
+
+networks:
+  emqx-net:
+    name: emqx-net

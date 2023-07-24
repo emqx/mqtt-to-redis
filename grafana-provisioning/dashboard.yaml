@@ -1,0 +1,10 @@
+apiVersion: 1
+
+providers:
+  - name: Redis
+    folder: "EMQX Data Integration Demo"
+    folderUid: ""
+    options:
+      path: "/grafana-dashboard-redis-analysis"
+    orgI": 1
+    type: "file"
