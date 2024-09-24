@@ -1,7 +1,6 @@
-version: '3.8'
 services:
   emqx-enterprise:
-    image: emqx/emqx-enterprise:5.0.3
+    image: emqx/emqx-enterprise:5.8.0
     container_name: emqx
     healthcheck:
       test: ["CMD", "emqx", "ping"]
