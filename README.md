@@ -32,13 +32,13 @@ Overall, Redis's widespread usage in IoT is attributed to its high performance, 
 1. Please make sure you have installed the [docker](https://www.docker.com/), and then running the following commands to start the demo:
 
   ```bash
-  docker-compose up -d
+  docker compose up -d
   ```
 
 2. Running the following commands to view data in Redis:
 
   ```bash
-  docker exec -it redis bash
+  docker compose exec -it redis bash
 
   redis-cli
 
