@@ -83,7 +83,7 @@ async function main() {
         client.publish('f/+', 'bad topic')
       } else if (Math.random() > 0.8) {
         // disconnect by disabled qos
-        client.publish('t/1', { qos: 2 })
+        client.publish('t/1', 'qos 2', { qos: 2 })
       }
 
     })
